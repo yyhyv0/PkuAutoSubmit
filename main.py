@@ -295,7 +295,7 @@ if __name__ == '__main__':
     SENDKEY = os.getenv("SENDKEY")
 
     chrome_options = Options()
-    # chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--headless")
     driver_pjs = webdriver.Edge(
         options=chrome_options,
         executable_path='/usr/bin/chromedriver',
