@@ -295,14 +295,11 @@ if __name__ == '__main__':
     SENDKEY = os.getenv("SENDKEY")
 
     chrome_options = Options()
-    
-    driver_pjs = webdriver.Chrome(chrome_options=chrome_options,executable_path="C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe")
-    
-    # # chrome_options.add_argument("--headless")
-    # driver_pjs = webdriver.Edge(
-    #     options=chrome_options,
-    #     executable_path='/usr/bin/chromedriver',
-    #     service_args=['--ignore-ssl-errors=true', '--ssl-protocol=TLSv1'])
+    # chrome_options.add_argument("--headless")
+    driver_pjs = webdriver.Edge(
+        options=chrome_options,
+        executable_path='/usr/bin/chromedriver',
+        service_args=['--ignore-ssl-errors=true', '--ssl-protocol=TLSv1'])
 
     print('Driver Launched\n')
 
