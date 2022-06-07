@@ -1,15 +1,10 @@
 # -*- coding: utf-8
 from configparser import ConfigParser
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoSuchElementException
 from selenium import webdriver
-from argparse import ArgumentParser
-import re
 from urllib.parse import quote
 from urllib import request
 import os
@@ -107,12 +102,13 @@ def go_to_application_in(driver, userName, password):
 
 
 def select_place_in(driver, ways):
-    time.sleep(0.1)
+    time.sleep(0.5)
     driver.find_elements_by_class_name('el-select')[1].click()
+    time.sleep(0.5)
     WebDriverWait(driver, 10).until(
         EC.visibility_of_element_located(
             (By.XPATH, f'//div[@x-placement="bottom-start"]/div/div/ul/li/span[text()="{ways[0]}"]')))
-    time.sleep(0.1)
+    time.sleep(0.5)
 
     for way in ways:
         target = driver.find_element_by_xpath(f'//div[@x-placement="bottom-start"]/div/div/ul/li/span[text()="{way}"]')
@@ -120,6 +116,8 @@ def select_place_in(driver, ways):
         time.sleep(0.1)
         target.click()
         time.sleep(0.1)
+    time.sleep(0.1)
+    driver.find_element_by_class_name('el-form-item__label').click()
 
 
 def select_place_out(driver, ways):
@@ -130,13 +128,15 @@ def select_place_out(driver, ways):
         EC.visibility_of_element_located(
             (By.XPATH, f'//div[@x-placement="bottom-start"]/div/div/ul/li/span[text()="{ways[0]}"]')))
     time.sleep(0.5)
-            
+
     for way in ways:
         target = driver.find_element_by_xpath(f'//div[@x-placement="bottom-start"]/div/div/ul/li/span[text()="{way}"]')
         driver.execute_script("arguments[0].scrollIntoView();", target)
         time.sleep(0.1)
         target.click()
         time.sleep(0.1)
+    time.sleep(0.1)
+    driver.find_element_by_class_name('el-form-item__label').click()
 
 
 def select_campus(driver, campus):
@@ -244,7 +244,7 @@ def wechat_notification_success(userName, sckey):
             quote('http://wx.xtuis.cn/' + sckey + '.send?text=成功报备&desp=学号' +
                   str(userName) + '成功报备',
                   safe='/:?=&')) as response:
-        response = json.loads(response.read().decode('utf-8'))
+        response = response.read().decode('utf-8')
 
 
 def wechat_notification_failed(userName, sckey):
@@ -252,7 +252,7 @@ def wechat_notification_failed(userName, sckey):
             quote('http://wx.xtuis.cn/' + sckey + '.send?text=[请注意]报备失败&desp=学号' +
                   str(userName) + '报备失败，需要您手动报备或在github页面手动重新运行，您可以在主仓库issue下报告错误日志。',
                   safe='/:?=&')) as response:
-        response = json.loads(response.read().decode('utf-8'))
+        response = response.read().decode('utf-8')
 
 
 def exception_printer(e: Exception or None):
@@ -293,13 +293,20 @@ if __name__ == '__main__':
     MAIL_ADDRESS = os.getenv("MAIL_ADDRESS")
     PHONE_NUMBER = os.getenv("PHONE_NUMBER")
     SENDKEY = os.getenv("SENDKEY")
+    
+    if os.getenv("YYHYYY") == 'LOCAL':     
+        chrome_options = Options()
+        driver_pjs = webdriver.Chrome(
+            chrome_options=chrome_options,
+            executable_path="C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe")
+    else:
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        driver_pjs = webdriver.Edge(
+            options=chrome_options,
+            executable_path='/usr/bin/chromedriver',
+            service_args=['--ignore-ssl-errors=true', '--ssl-protocol=TLSv1'])
 
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    driver_pjs = webdriver.Edge(
-        options=chrome_options,
-        executable_path='/usr/bin/chromedriver',
-        service_args=['--ignore-ssl-errors=true', '--ssl-protocol=TLSv1'])
 
     print('Driver Launched\n')
 
