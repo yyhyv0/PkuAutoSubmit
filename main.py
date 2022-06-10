@@ -23,7 +23,7 @@ def wechat_notification(key, title, info):
         print(responseBody.text)
 
 
-def update_info(last_info, self_info):
+def update_info(last_info, self_info, dt):
 
     last_info.update(self_info)
 
@@ -87,7 +87,7 @@ class PkuAccount:
         try:
             return json.loads(return_text)['token']
         except KeyError:
-            raise Exception(f'{return_text}')
+            raise Exception(f'{return_text}\nusername:{self._username}\npassword:{self._passwd}')
 
     def login(self, appid, otp_code=''):
         if appid in self.alias_dict:
@@ -127,20 +127,10 @@ if __name__ == '__main__':
 
     last_info=pku.session.get(f'https://simso.pku.edu.cn/ssapi/stuaffair/epiApply/getSqxxHis?sid={sid}&_sk={xh}&pageNum=1')
     last_info=json.loads(last_info.text)["row"][0]
-
     self_info=pku.session.get(f'https://simso.pku.edu.cn/ssapi/stuaffair/epiApply/getSqzt?sid={sid}&_sk={xh}')
     self_info=json.loads(self_info.text)["row"]["lxxx"]
 
-
-    SaveUrl = f"https://simso.pku.edu.cn/ssapi/stuaffair/epiApply/saveSqxx?sid={sid}&_sk={xh}&applyType=yqwf"
-
-    update_info(last_info, self_info)
-
-    payload = json.dumps(last_info)
-
-    import pprint
-    pp = pprint.PrettyPrinter(indent=4)
-    pp.pprint(last_info)
+    update_info(last_info, self_info, dt)
 
     r0 = pku.session.post(f'https://simso.pku.edu.cn/ssapi/stuaffair/epiApply/saveSqxx?sid={sid}&_sk={xh}&applyType=yqwf', json=last_info)
     res_0 = json.loads(r0.text)
