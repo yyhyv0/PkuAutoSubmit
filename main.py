@@ -139,7 +139,7 @@ if __name__ == '__main__':
         wechat_notification(sendkey, dt + '预约失败', str(res_0))
         exit(1)
 
-    submit=pku.session.get(f'https://simso.pku.edu.cn/ssapi/stuaffair/epiAccess/submitSqxx?sid={sid}&_sk={xh}&sqbh={res_0["row"]}')
+    submit=pku.session.get(f'https://simso.pku.edu.cn/ssapi/stuaffair/epiApply/submitSqxx?sid={sid}&_sk={xh}&sqbh={res_0["row"]}')
     submit_response=json.loads(submit.text)
     if submit_response['code'] in [1, '1'] and submit_response["msg"] == '成功':
         print(f'Success: {submit_response}') # Success
