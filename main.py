@@ -134,12 +134,18 @@ if __name__ == '__main__':
 
     r0 = pku.session.post(f'https://simso.pku.edu.cn/ssapi/stuaffair/epiApply/saveSqxx?sid={sid}&_sk={xh}&applyType=yqwf', json=last_info)
     res_0 = json.loads(r0.text)
+    if res_0['code'] not in [1, '1']:
+        print(f'Failed: {res_0}') # Failed
+        wechat_notification(sendkey, dt + '预约失败', str(res_0))
+        exit(1)
+
     submit=pku.session.get(f'https://simso.pku.edu.cn/ssapi/stuaffair/epiAccess/submitSqxx?sid={sid}&_sk={xh}&sqbh={res_0["row"]}')
     submit_response=json.loads(submit.text)
     if submit_response['code'] in [1, '1'] and submit_response["msg"] == '成功':
         print(f'Success: {submit_response}') # Success
-        wechat_notification(sendkey, dt + '预约成功', submit_response)
+        wechat_notification(sendkey, dt + '预约成功', str(submit_response))
     else:
         print(f'Failed: {submit_response}') # Failed
-        wechat_notification(sendkey, dt + '预约失败', submit_response)
+        print(f'saveURL return : {res_0}') # Failed
+        wechat_notification(sendkey, dt + '预约失败', str(submit_response))
         exit(1)
